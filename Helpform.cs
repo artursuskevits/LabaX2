@@ -24,13 +24,13 @@ namespace ProjectLabratornaja
             Lb.Height = 300;
             Lb.Width = 300;
             Lb.Location = new Point(100, 0);
-            Lb.Text = "Мы стреляем сигареты, мы малы, как Ватикан\r\nТы мне делаешь порезы, а я собирал AK\r\nЯ хочу заплентить школу, будет рада вся семья\r\nНа моей могиле мордочка кота, oh my god";
+            Lb.Text = "See on kasulik info";
             Lb.TextAlign = ContentAlignment.MiddleCenter;
 
             Btn = new Button();
             Btn.Height = 100;
             Btn.Width = 100;
-            Btn.Text = "Close";
+            Btn.Text = "Sulge";
             Btn.TextAlign = ContentAlignment.MiddleCenter;
             Btn.Location = new Point(200, 350);
             Btn.Click += Btn_Click;

@@ -51,7 +51,7 @@ namespace ProjectLabratornaja
             Ts.Width = 150;
             Ts.Height = this.Height;
             Ts.Location = new Point(0, Ms.Height);
-            Ts.BackColor = Color.White;
+            Ts.BackColor = Color.LightGray;
             Ts.Anchor = AnchorStyles.Left;
 
             //PicturBox Settings
@@ -66,26 +66,26 @@ namespace ProjectLabratornaja
 
             //Panel Settings
             Pl = new Panel();
-            Pl.Height = 50;
+            Pl.Height = 60;
             Pl.Width = 1000;
             Pl.Location = new Point(Ts.Width, Ms.Height + Pb.Height + 10);
-            Pl.BackColor = Color.LightBlue;
+            Pl.BackColor = Color.White;
             Pl.Text = "0,0";
             Pl.ForeColor = Color.Firebrick;
 
             //Label Settings
             Lb = new System.Windows.Forms.Label();
-            Lb.Height = 30;
+            Lb.Height = 35;
             Lb.Width = 300;
             Lb.Text = "0,0";
-            Lb.BackColor = Color.LightBlue;
+            Lb.BackColor = Color.White;
             Pl.Controls.Add(Lb);
 
             //TrackBar settings
             Tb = new System.Windows.Forms.TrackBar();
-            Tb.Height = 30;
+            Tb.Height = 10;
             Tb.Width = 300;
-            Tb.BackColor = Color.LightBlue;
+            Tb.BackColor = Color.White;
             Tb.Location = new Point(Ts.Width + 650, Ms.Height + Pb.Height + 12);
             Tb.Maximum = 20;
             Tb.Minimum = 1;
@@ -98,7 +98,7 @@ namespace ProjectLabratornaja
             UnderPbPl.Height = 670;
             UnderPbPl.Width = 1020;
             UnderPbPl.Location = new Point(Ts.Width - 10, Ms.Height - 10);
-            UnderPbPl.BackColor = Color.Pink;
+            UnderPbPl.BackColor = Color.LightGray;
 
 
 
@@ -180,6 +180,7 @@ namespace ProjectLabratornaja
             NewButton.Click += NewButton_Click;
             OpenButton.Click += OpenButton_Click;
             SaveButton.Click += SaveButton_Click;
+            ColorButton.Click += ColorButton_Click;
 
             //Add all elements to form
             this.Controls.Add(Ts);
@@ -197,9 +198,17 @@ namespace ProjectLabratornaja
 
         }
 
+        private void ColorButton_Click(object? sender, EventArgs e)
+        {
+            ColorForm colorform = new ColorForm(CurrentPen.Color);
+            colorform.Owner = this;
+            colorform.ShowDialog();
+        }
+
         private void ColorPenItem_Click(object? sender, EventArgs e)
         {
             ColorForm colorform = new ColorForm(CurrentPen.Color);
+            colorform.Owner = this;
             colorform.ShowDialog();
         }
 
@@ -234,10 +243,11 @@ namespace ProjectLabratornaja
         private void RenoEditItem_Click(object? sender, EventArgs e)
         {
 
-
-            if (Historycounter < SecondHistory.Count - 1)
+            int SecondHistoryCounter = Historycounter;
+            if (Historycounter < SecondHistory.Count)
             {
-                Pb.Image = new Bitmap(SecondHistory[Historycounter]);
+                Pb.Image = new Bitmap(SecondHistory[SecondHistoryCounter+1]);
+                
             }
             else { MessageBox.Show("Ajalugu ei ole"); }
         }

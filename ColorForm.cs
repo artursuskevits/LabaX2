@@ -14,13 +14,16 @@ namespace ProjectLabratornaja
     public partial class ColorForm : Form
     {
         Color Colorresult;
+        TextBox tb1;
         PictureBox Pb;
         Button OkBtn, CancelBtn, OtherBtn;
         Label Greenlbl, Redlbl, Bluelbl;
         HScrollBar Greenhsb, Redhsb, Bluehsb;
         NumericUpDown GreenNum, RedNum, BlueNum;
-        public ColorForm(Color color)
+        public ColorForm(Color ccolor)
         {
+            tb1 = new TextBox();
+            
             //GREEN
 
             this.Width = 400;
@@ -132,6 +135,7 @@ namespace ProjectLabratornaja
             OkBtn.Text = "Ok";
             OkBtn.Location = new Point(10, Bluelbl.Location.Y + Bluelbl.Height + 30);
             this.Controls.Add(OkBtn);
+            OkBtn.Click += OkBtn_Click;
 
             CancelBtn = new Button();
             CancelBtn.Width = 100;
@@ -139,6 +143,7 @@ namespace ProjectLabratornaja
             CancelBtn.Text = "Cancel";
             CancelBtn.Location = new Point(10 + OkBtn.Width, Bluelbl.Location.Y + Bluelbl.Height + 30);
             this.Controls.Add(CancelBtn);
+            CancelBtn.Click += CancelBtn_Click;
 
             OtherBtn = new Button();
             OtherBtn.Width = 100;
@@ -156,15 +161,39 @@ namespace ProjectLabratornaja
             GreenNum.Tag = Greenhsb;
             BlueNum.Tag = Bluehsb;
 
-            RedNum.Value = color.R;
-            GreenNum.Value = color.G;
-            BlueNum.Value = color.B;
+            RedNum.Value = ccolor.R;
+            GreenNum.Value = ccolor.G;
+            BlueNum.Value = ccolor.B;
+        }
+
+        private void OkBtn_Click(object? sender, EventArgs e)
+        {
+            MainForm main = this.Owner as MainForm;
+            if (main != null)
+            {
+                main.CurrentPen.Color = Colorresult;
+            }
+            this.Close();
+        }
+
+        private void CancelBtn_Click(object? sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void OtherBtn_Click(object? sender, EventArgs e)
         {
             ColorDialog cDia = new ColorDialog();
-            cDia.ShowDialog();
+            if (cDia.ShowDialog()==DialogResult.OK)
+            {
+                Redhsb.Value = cDia.Color.R;
+                Bluehsb.Value = cDia.Color.B;
+                Greenhsb.Value = cDia.Color.G;
+
+                Colorresult = cDia.Color;
+                UpadteColor();
+            }
+            
         }
 
         private void RedNum_ValueChanged(object? sender, EventArgs e)
