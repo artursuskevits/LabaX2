@@ -8,11 +8,13 @@ using static System.Windows.Forms.AxHost;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Runtime.Intrinsics.X86;
 
 namespace ProjectLabratornaja
 {
     public partial class MainForm : Form
     {
+
         List<Image> SecondHistory = new List<Image>();
         public List<Image> History = new List<Image>();
         int Historycounter;
@@ -31,11 +33,14 @@ namespace ProjectLabratornaja
         public MainForm()
         {
             
+            this.KeyPreview = true;
             drawning = false;
             CurrentPen = new Pen(Color.Black);
-
+            this.KeyDown += Save_ShortKey;
+            this.KeyDown += Undo_ShortKey;
+            this.KeyDown += Reno_ShortKey;
             //Foarm settings
-            this.Text = "Bad Paint";
+            this.Text = "Halb Paint";
             this.Height = 800;
             this.Width = 1200;
 
@@ -53,6 +58,7 @@ namespace ProjectLabratornaja
             Ts.Location = new Point(0, Ms.Height);
             Ts.BackColor = Color.LightGray;
             Ts.Anchor = AnchorStyles.Left;
+            Ts.ImageScalingSize = new Size(130, 70);
 
             //PicturBox Settings
             Pb = new PictureBox();
@@ -103,11 +109,11 @@ namespace ProjectLabratornaja
 
 
             //Menu Strip Fill
-            ToolStripMenuItem FileItem = new ToolStripMenuItem("File");
-            ToolStripMenuItem NewFileItem = new ToolStripMenuItem("New");
-            ToolStripMenuItem OpenFileItem = new ToolStripMenuItem("Open");
-            ToolStripMenuItem SaveFileItem = new ToolStripMenuItem("Save");
-            ToolStripMenuItem ExitFileItem = new ToolStripMenuItem("Exit");
+            ToolStripMenuItem FileItem = new ToolStripMenuItem("Faili");
+            ToolStripMenuItem NewFileItem = new ToolStripMenuItem("Uus");
+            ToolStripMenuItem OpenFileItem = new ToolStripMenuItem("Ava");
+            ToolStripMenuItem SaveFileItem = new ToolStripMenuItem("Salvesta");
+            ToolStripMenuItem ExitFileItem = new ToolStripMenuItem("Välja");
             FileItem.DropDownItems.Add(NewFileItem);
             FileItem.DropDownItems.Add(OpenFileItem);
             FileItem.DropDownItems.Add(SaveFileItem);
@@ -116,11 +122,12 @@ namespace ProjectLabratornaja
             NewFileItem.Click += NewFileItem_Click;
             SaveFileItem.Click += SaveFileItem_Click;
             OpenFileItem.Click += OpenFileItem_Click;
+            ExitFileItem.Click += ExitFileItem_Click;
 
-            ToolStripMenuItem EditItem = new ToolStripMenuItem("Edit");
-            ToolStripMenuItem UndoEditItem = new ToolStripMenuItem("Undo");
-            ToolStripMenuItem RenoEditItem = new ToolStripMenuItem("Reno");
-            ToolStripMenuItem PenEditItem = new ToolStripMenuItem("Pen");
+            ToolStripMenuItem EditItem = new ToolStripMenuItem("Muuda");
+            ToolStripMenuItem UndoEditItem = new ToolStripMenuItem("´Tagasi");
+            ToolStripMenuItem RenoEditItem = new ToolStripMenuItem("Järgmine");
+            ToolStripMenuItem PenEditItem = new ToolStripMenuItem("Pliiats");
             EditItem.DropDownItems.Add(UndoEditItem);
             EditItem.DropDownItems.Add(RenoEditItem);
             EditItem.DropDownItems.Add(PenEditItem);
@@ -128,15 +135,15 @@ namespace ProjectLabratornaja
             RenoEditItem.Click += RenoEditItem_Click;
 
             PenEditItem.Checked = true;
-            ToolStripMenuItem StylePenItem = new ToolStripMenuItem("Style");
-            ToolStripMenuItem ColorPenItem = new ToolStripMenuItem("Color");
+            ToolStripMenuItem StylePenItem = new ToolStripMenuItem("Stiil");
+            ToolStripMenuItem ColorPenItem = new ToolStripMenuItem("Värv");
             PenEditItem.DropDownItems.Add(ColorPenItem);
             PenEditItem.DropDownItems.Add(StylePenItem);
             StylePenItem.Checked = true;
             ColorPenItem.Click += ColorPenItem_Click;
-            ToolStripMenuItem SolidStyleItem = new ToolStripMenuItem("Solid");
-            ToolStripMenuItem DotStyleItem = new ToolStripMenuItem("Dot");
-            ToolStripMenuItem DashDotDotStyleItem = new ToolStripMenuItem("DashDotDot");
+            ToolStripMenuItem SolidStyleItem = new ToolStripMenuItem("Soliidne");
+            ToolStripMenuItem DotStyleItem = new ToolStripMenuItem("Punkt");
+            ToolStripMenuItem DashDotDotStyleItem = new ToolStripMenuItem("KriipsPunktPunkt");
             StylePenItem.DropDownItems.Add(SolidStyleItem);
             StylePenItem.DropDownItems.Add(DotStyleItem);
             StylePenItem.DropDownItems.Add(DashDotDotStyleItem);
@@ -146,41 +153,61 @@ namespace ProjectLabratornaja
             DotStyleItem.Click += (sender, e) => DotStyleItem_Click(sender, e, SolidStyleItem, DotStyleItem, DashDotDotStyleItem); ;
             DashDotDotStyleItem.Click += (sender, e) => DashDotDotStyleItem_Click(sender, e, SolidStyleItem, DotStyleItem, DashDotDotStyleItem); ;
 
-            ToolStripMenuItem HelpItem = new ToolStripMenuItem("Help");
-            ToolStripMenuItem AboutHelpItem = new ToolStripMenuItem("About");
+            ToolStripMenuItem HelpItem = new ToolStripMenuItem("Abi");
+            ToolStripMenuItem AboutHelpItem = new ToolStripMenuItem("Kohta");
             HelpItem.DropDownItems.Add(AboutHelpItem);
             Ms.Items.Add(HelpItem);
             AboutHelpItem.Click += AboutHelpItem_Click;
 
             //Tool Strip Fill
             Ts.LayoutStyle = ToolStripLayoutStyle.VerticalStackWithOverflow;
-            ToolStripButton NewButton = new ToolStripButton("New");
-            NewButton.Size = new Size(50, 30);
-            ToolStripButton OpenButton = new ToolStripButton("Open");
-            OpenButton.Size = new Size(150, 30);
-            ToolStripButton SaveButton = new ToolStripButton("Save");
-            SaveButton.Size = new Size(150, 30);
-            ToolStripButton ColorButton = new ToolStripButton("Color");
-            ColorButton.Size = new Size(150, 30);
-            ToolStripButton ExitButton = new ToolStripButton("Exit");
-            ExitButton.Size = new Size(150, 30);
 
-            NewButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            OpenButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            SaveButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ColorButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            ExitButton.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            // Creating a resized image
+            Image NewImage = Image.FromFile("../../../New.png");
+            Image ColorImage = Image.FromFile("../../../ColorImage.png");
+            Image OpenImage = Image.FromFile("../../../OpenImage.png");
+            Image SaveImage = Image.FromFile("../../../SaveImage.png");
+            Image ExitImage = Image.FromFile("../../../ExitImage.png");
 
+            ToolStripButton NewButton = new ToolStripButton("Uus");
+            NewButton.Image = NewImage;
+            NewButton.ImageAlign = ContentAlignment.MiddleCenter;
+            NewButton.DisplayStyle = ToolStripItemDisplayStyle.Image;   
+
+            ToolStripButton OpenButton = new ToolStripButton("Ava");
+            OpenButton.Image = OpenImage;
+            OpenButton.ImageAlign = ContentAlignment.MiddleCenter;
+            OpenButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+
+            ToolStripButton SaveButton = new ToolStripButton("Salvesta");
+            SaveButton.Image = SaveImage;
+            SaveButton.ImageAlign = ContentAlignment.MiddleCenter;
+            SaveButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+
+            ToolStripButton ColorButton = new ToolStripButton("Värv");
+            ColorButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ColorButton.Image = ColorImage;
+            ColorButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+
+            ToolStripButton ExitButton = new ToolStripButton("Välja");
+            ExitButton.ImageAlign = ContentAlignment.MiddleCenter;
+            ExitButton.Image = ExitImage;
+            ExitButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
             Ts.Items.Add(NewButton);
             Ts.Items.Add(OpenButton);
             Ts.Items.Add(SaveButton);
             Ts.Items.Add(ColorButton);
             Ts.Items.Add(ExitButton);
+
             NewButton.Click += NewButton_Click;
             OpenButton.Click += OpenButton_Click;
             SaveButton.Click += SaveButton_Click;
             ColorButton.Click += ColorButton_Click;
+            ExitButton.Click += ExitButton_Click;
+
+
+
 
             //Add all elements to form
             this.Controls.Add(Ts);
@@ -196,6 +223,32 @@ namespace ProjectLabratornaja
             Tb.BringToFront();
 
 
+        }
+
+        private void ExitButton_Click(object? sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Sa tahad lahkuda?", "Hoiatus", MessageBoxButtons.YesNo);
+            switch (result)
+            {
+                case DialogResult.Yes:
+                    this.Close();
+                    break;
+                case DialogResult.No:
+                    break;
+            }
+        }
+
+        private void ExitFileItem_Click(object? sender, EventArgs e)
+        {
+            var result = MessageBox.Show("Sa tahad lahkuda?", "Hoiatus", MessageBoxButtons.YesNo);
+            switch (result)
+            {
+                case DialogResult.Yes:
+                    this.Close();
+                    break;
+                case DialogResult.No:
+                    break;
+            }
         }
 
         private void ColorButton_Click(object? sender, EventArgs e)
@@ -243,13 +296,18 @@ namespace ProjectLabratornaja
         private void RenoEditItem_Click(object? sender, EventArgs e)
         {
 
-            int SecondHistoryCounter = Historycounter;
-            if (Historycounter < SecondHistory.Count)
-            {
-                Pb.Image = new Bitmap(SecondHistory[SecondHistoryCounter+1]);
-                
-            }
-            else { MessageBox.Show("Ajalugu ei ole"); }
+            
+                if (Historycounter <= History.Count - 1)
+                {
+                    if (Historycounter + 1 < History.Count)
+                    {
+                        Pb.Image = new Bitmap(History[Historycounter + 1]);
+                        Historycounter = Historycounter + 1;
+                    }
+
+                }
+                else MessageBox.Show("Ajalugu ei ole");
+            
         }
 
         private void UndoEditItem_Click(object? sender, EventArgs e)
@@ -258,7 +316,7 @@ namespace ProjectLabratornaja
             {
                 Pb.Image = new Bitmap(History[Historycounter - 1]);
 
-                History.RemoveAt(History.Count - 1);
+                
                 Historycounter = Historycounter - 1;
             }
             else { MessageBox.Show("Ajalugu ei ole"); }
@@ -315,7 +373,7 @@ namespace ProjectLabratornaja
         {
             if (Pb.Image != null)
             {
-                var result = MessageBox.Show("Save this image befor your create a new one", "Warning", MessageBoxButtons.YesNoCancel);
+                var result = MessageBox.Show("Salvesta see pilt enne uue", "Hoiatus", MessageBoxButtons.YesNoCancel);
                 switch (result)
                 {
                     case DialogResult.No: break;
@@ -384,7 +442,7 @@ namespace ProjectLabratornaja
         {
             if (Pb.Image == null)
             {
-                MessageBox.Show("Before Create New File");
+                MessageBox.Show("Enne uue faili loomist");
                 return;
             }
             if (e.Button == MouseButtons.Left)
@@ -433,7 +491,7 @@ namespace ProjectLabratornaja
         {
             if (Pb.Image != null)
             {
-                var result = MessageBox.Show("Save this image befor your create a new one", "Warning", MessageBoxButtons.YesNoCancel);
+                var result = MessageBox.Show("Salvesta see pilt enne uue", "Hoiatus", MessageBoxButtons.YesNoCancel);
                 switch (result)
                 {
                     case DialogResult.No: break;
@@ -473,7 +531,73 @@ namespace ProjectLabratornaja
 
         }
 
+        ////SHORTKEYS//
+        private void Save_ShortKey(object sender, KeyEventArgs e)
+        {
+            
+            if (e.Control && e.KeyCode == Keys.S)
+            {
 
+                SaveFileDialog SaveDig = new SaveFileDialog();
+                SaveDig.Filter = "JPEG Image|*.jpg|Bitmap Image|*.bmp|GIF Image|*.gif|PNG Image|*.png";
+                SaveDig.Title = "Save an Image File";
+                SaveDig.FilterIndex = 4;
+                SaveDig.ShowDialog();
+                if (SaveDig.FileName != "")
+                {
+                    System.IO.FileStream fs = (System.IO.FileStream)SaveDig.OpenFile();
+
+                    switch (SaveDig.FilterIndex)
+                    {
+                        case 1:
+                            this.Pb.Image.Save(fs, ImageFormat.Jpeg);
+                            break;
+                        case 2:
+                            this.Pb.Image.Save(fs, ImageFormat.Bmp);
+                            break;
+                        case 3:
+                            this.Pb.Image.Save(fs, ImageFormat.Gif);
+                            break;
+                        case 4:
+                            this.Pb.Image.Save(fs, ImageFormat.Png);
+                            break;
+                    }
+                }
+
+            }
+        }
+        private void Undo_ShortKey(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Z)
+            {
+                if (History.Count != 0 && Historycounter != 0)
+                {
+                    Pb.Image = new Bitmap(History[Historycounter - 1]);
+
+
+                    Historycounter = Historycounter - 1;
+                }
+                else { MessageBox.Show("Ajalugu ei ole"); }
+            }
+
+        }
+
+        private void Reno_ShortKey(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.X)
+            {
+                if (Historycounter <= History.Count - 1)
+                {
+                    if (Historycounter +1 < History.Count)
+                    {
+                        Pb.Image = new Bitmap(History[Historycounter + 1]);
+                        Historycounter = Historycounter + 1;
+                    }
+
+                }
+                else MessageBox.Show("Ajalugu ei ole");
+            }
+        }
 
     }
 }

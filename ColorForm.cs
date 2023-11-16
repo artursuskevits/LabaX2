@@ -28,12 +28,12 @@ namespace ProjectLabratornaja
 
             this.Width = 400;
             this.Height = 250;
-            this.Text = "Color";
+            this.Text = "Värv";
 
             Greenlbl = new Label();
             Greenlbl.Width = 40;
             Greenlbl.Height = 30;
-            Greenlbl.Text = "Green";
+            Greenlbl.Text = "Rohelene";
             Greenlbl.Location = new Point(10, 30);
 
             this.Controls.Add(Greenlbl);
@@ -63,7 +63,7 @@ namespace ProjectLabratornaja
             Redlbl = new Label();
             Redlbl.Width = 40;
             Redlbl.Height = 30;
-            Redlbl.Text = "Red";
+            Redlbl.Text = "Punane";
             Redlbl.Location = new Point(10, Greenlbl.Location.Y + Greenlbl.Height + 10);
 
             this.Controls.Add(Redlbl);
@@ -93,7 +93,7 @@ namespace ProjectLabratornaja
             Bluelbl = new Label();
             Bluelbl.Width = 40;
             Bluelbl.Height = 30;
-            Bluelbl.Text = "Blue";
+            Bluelbl.Text = "Sinine";
             Bluelbl.Location = new Point(10, Redlbl.Location.Y + Redlbl.Height + 10);
 
             this.Controls.Add(Bluelbl);
@@ -140,7 +140,7 @@ namespace ProjectLabratornaja
             CancelBtn = new Button();
             CancelBtn.Width = 100;
             CancelBtn.Height = 30;
-            CancelBtn.Text = "Cancel";
+            CancelBtn.Text = "Tühista";
             CancelBtn.Location = new Point(10 + OkBtn.Width, Bluelbl.Location.Y + Bluelbl.Height + 30);
             this.Controls.Add(CancelBtn);
             CancelBtn.Click += CancelBtn_Click;
@@ -148,7 +148,7 @@ namespace ProjectLabratornaja
             OtherBtn = new Button();
             OtherBtn.Width = 100;
             OtherBtn.Height = 30;
-            OtherBtn.Text = "Other Colors";
+            OtherBtn.Text = "Muud Värvid";
             OtherBtn.Location = new Point(Pb.Location.X, Bluelbl.Location.Y + Bluelbl.Height + 30);
             this.Controls.Add(OtherBtn);
             OtherBtn.Click += OtherBtn_Click;
